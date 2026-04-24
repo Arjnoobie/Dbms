@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ChainPulse | DBMS Project</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <style>
+        :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --danger: #e74c3c; --warning: #f1c40f; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; }
+        .sidebar { width: 260px; background: var(--primary); color: white; height: 100vh; padding: 25px; box-sizing: border-box; position: fixed; }
+        .main-content { flex: 1; margin-left: 260px; padding: 40px; }
+        .grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 25px; margin-bottom: 25px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; color: #95a5a6; font-size: 12px; text-transform: uppercase; padding: 10px; }
+        td { padding: 12px 10px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .btn { border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; }
+        .btn-add { background: var(--success); margin-right: 5px; }
+        .btn-sub { background: var(--danger); }
+        .prediction-box { background: #fff9db; border-left: 6px solid var(--warning); padding: 18px; color: #856404; border-radius: 4px; line-height: 1.5; }
+        /* Reorder badge */
+        .badge { padding: 3px 10px; border-radius: 10px; font-size: 12px; font-weight: bold; }
+        .badge-danger { background: #fdecea; color: #e74c3c; }
+        .badge-ok    { background: #eafaf1; color: #27ae60; }
+        /* Anomaly alerts */
+        .anomaly-item { background: #fdecea; border-left: 4px solid var(--danger); padding: 12px 15px; border-radius: 4px; margin-bottom: 10px; font-size: 14px; color: #c0392b; }
+        .no-anomaly { background: #eafaf1; border-left: 4px solid var(--success); padding: 12px 15px; border-radius: 4px; font-size: 14px; color: #27ae60; }
+        /* Live indicator */
+        .live-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #27ae60; font-weight: bold; margin-left: 12px; vertical-align: middle; }
+        .live-dot { width: 8px; height: 8px; background: #27ae60; border-radius: 50%; animation: pulse 1.5s infinite; display: inline-block; }
+        @keyframes pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.4; transform:scale(1.4); } }
+        h3 { margin-top: 0; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2 style="color: var(--accent); margin-top: 0;">CHAINPULSE</h2>
+    <hr style="border: 0; border-top: 1px solid #34495e; margin: 20px 0;">
+    <p>📊 Dashboard</p>
+    <p>📦 Inventory</p>
+    <p>🤖 AI Forecast</p>
+    <p>🚨 Anomaly Alerts</p>
+    <hr style="border: 0; border-top: 1px solid #34495e; margin: 20px 0;">
+    <p style="font-size: 12px; color: #7f8c8d;">Auto-refreshes every 15s</p>
+</div>
+
+<div class="main-content">
+    <h1 style="margin-bottom: 25px;">
+        Management Dashboard
+        <span class="live-badge"><span class="live-dot"></span> LIVE</span>
+    </h1>
+
+    <!-- ROW 1: Inventory table + AI prediction -->
+    <div class="grid">
+        <div class="card">
+            <h3>📦 Live Inventory Stock</h3>
+            <table>
+                <thead><tr><th>Item</th><th>Qty</th><th>Adjust</th></tr></thead>
+                <tbody id="inventoryBody"><tr><td colspan="3" style="color:#aaa;">Loading...</td></tr></tbody>
+            </table>
+        </div>
+        <div class="card">
+            <h3>🤖 AI Restock Suggestion</h3>
+            <div id="prediction" class="prediction-box">Connecting to AI...</div>
+            <h3 style="margin-top: 28px;">📈 30-Day Sales Trend</h3>
+            <div style="height: 200px; position: relative;">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROW 2: Charts - weekly bar + stock levels -->
+    <div class="grid-2">
+        <div class="card">
+            <h3>📊 Weekly Sales Breakdown</h3>
+            <div style="height: 220px; position: relative;">
+                <canvas id="weeklyChart"></canvas>
+            </div>
+        </div>
+        <div class="card">
+            <h3>🗄️ Current Stock Levels</h3>
+            <div style="height: 220px; position: relative;">
+                <canvas id="stockChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROW 3: Demand forecast + Anomaly detection -->
+    <div class="grid-2">
+        <div class="card">
+            <h3>🔮 Demand Forecast & Reorder</h3>
+            <table>
+                <thead><tr><th>Item</th><th>Avg/Day</th><th>Days Left</th><th>Status</th></tr></thead>
+                <tbody id="forecastBody"><tr><td colspan="4" style="color:#aaa;">Loading...</td></tr></tbody>
+            </table>
+        </div>
+        <div class="card">
+            <h3>🚨 Anomaly Detection — Stock Shrinkage</h3>
+            <div id="anomalyList"><p style="color:#aaa;">Scanning for anomalies...</p></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Chart instances — reuse to avoid "canvas already in use" error on refresh
+    const charts = {};
+
+    function createOrUpdate(id, config) {
+        if (charts[id]) {
+            charts[id].data.labels   = config.data.labels;
+            charts[id].data.datasets = config.data.datasets;
+            charts[id].update();
+        } else {
+            charts[id] = new Chart(document.getElementById(id), config);
+        }
+    }
+
+    // ── Inventory table ──────────────────────────────────────────────────────
+    async function loadInventory() {
+        try {
+            const res   = await fetch('http://localhost:8080/api/items');
+            const items = await res.json();
+
+            document.getElementById('inventoryBody').innerHTML = items.map(item => `
+                <tr>
+                    <td>${item.itemName}</td>
+                    <td><b>${item.currentStock}</b></td>
+                    <td>
+                        <button class="btn btn-add" onclick="updateStock(${item.id}, 1)">+</button>
+                        <button class="btn btn-sub" onclick="updateStock(${item.id}, -1)">−</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Also refresh the stock levels bar chart with the same data
+            createOrUpdate('stockChart', {
+                type: 'bar',
+                data: {
+                    labels: items.map(i => i.itemName),
+                    datasets: [{
+                        label: 'Current Stock',
+                        data: items.map(i => i.currentStock),
+                        backgroundColor: items.map(i =>
+                            i.currentStock < 10 ? 'rgba(231,76,60,0.7)' : 'rgba(52,152,219,0.7)'
+                        ),
+                        borderRadius: 6
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        } catch (e) {
+            document.getElementById('inventoryBody').innerHTML =
+                '<tr><td colspan="3" style="color:#e74c3c;">Could not load inventory (is Spring Boot running?)</td></tr>';
+        }
+    }
+
+    async function updateStock(id, change) {
+        await fetch(`http://localhost:8080/api/items/${id}/update?change=${change}`, { method: 'POST' });
+        loadInventory();
+    }
+
+    // ── AI prediction ────────────────────────────────────────────────────────
+    async function loadPrediction() {
+        try {
+            const res  = await fetch('http://localhost:5000/api/predict');
+            const data = await res.json();
+            document.getElementById('prediction').innerHTML = data.message;
+        } catch (e) {
+            document.getElementById('prediction').innerHTML = '⚠️ AI server offline (is predictor.py running?)';
+        }
+    }
+
+    // ── 30-day sales trend (line chart) ──────────────────────────────────────
+    async function loadSalesChart() {
+        try {
+            const res       = await fetch('http://localhost:8080/api/sales');
+            const salesData = await res.json();
+            createOrUpdate('salesChart', {
+                type: 'line',
+                data: {
+                    labels: salesData.map(s => s.saleDate),
+                    datasets: [{
+                        label: 'Daily Sales',
+                        data: salesData.map(s => s.totalQuantitySold),
+                        borderColor: '#3498db',
+                        tension: 0.3,
+                        fill: true,
+                        backgroundColor: 'rgba(52,152,219,0.1)'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        } catch (e) { /* silent — chart just stays blank */ }
+    }
+
+    // ── Weekly bar chart ─────────────────────────────────────────────────────
+    async function loadWeeklyChart() {
+        try {
+            const res  = await fetch('http://localhost:5000/api/sales-stats');
+            const data = await res.json();
+            createOrUpdate('weeklyChart', {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Units Sold',
+                        data: data.values,
+                        backgroundColor: ['rgba(155,89,182,0.7)','rgba(52,152,219,0.7)','rgba(26,188,156,0.7)','rgba(241,196,15,0.7)'],
+                        borderRadius: 6
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        } catch (e) { /* silent */ }
+    }
+
+    // ── Demand forecast table ────────────────────────────────────────────────
+    async function loadForecast() {
+        try {
+            const res   = await fetch('http://localhost:5000/api/forecast');
+            const items = await res.json();
+            document.getElementById('forecastBody').innerHTML = items.map(item => {
+                const daysText = item.days_until_stockout !== null
+                    ? item.days_until_stockout + ' days'
+                    : 'N/A';
+                const badge = item.needs_reorder
+                    ? '<span class="badge badge-danger">⚠ Reorder</span>'
+                    : '<span class="badge badge-ok">✓ OK</span>';
+                return `<tr>
+                    <td>${item.item_name}</td>
+                    <td>${item.avg_daily_sales}</td>
+                    <td>${daysText}</td>
+                    <td>${badge}</td>
+                </tr>`;
+            }).join('');
+        } catch (e) {
+            document.getElementById('forecastBody').innerHTML =
+                '<tr><td colspan="4" style="color:#e74c3c;">Could not load forecast (is predictor.py running?)</td></tr>';
+        }
+    }
+
+    // ── Anomaly detection ────────────────────────────────────────────────────
+    async function loadAnomalies() {
+        try {
+            const res       = await fetch('http://localhost:5000/api/anomalies');
+            const anomalies = await res.json();
+            const el = document.getElementById('anomalyList');
+            if (anomalies.length === 0) {
+                el.innerHTML = '<div class="no-anomaly">✅ No anomalies detected. Stock movements look normal.</div>';
+            } else {
+                el.innerHTML = anomalies.map(a =>
+                    `<div class="anomaly-item">🚨 ${a.message}</div>`
+                ).join('');
+            }
+        } catch (e) {
+            document.getElementById('anomalyList').innerHTML =
+                '<p style="color:#e74c3c;">Could not load anomaly data (is predictor.py running?)</p>';
+        }
+    }
+
+    // ── Boot & real-time polling ─────────────────────────────────────────────
+    function loadAll() {
+        loadInventory();
+        loadPrediction();
+        loadSalesChart();
+        loadWeeklyChart();
+        loadForecast();
+        loadAnomalies();
+    }
+
+    window.onload = () => {
+        loadAll();
+        setInterval(loadInventory,   15000);  // inventory + stock chart every 15s
+        setInterval(loadPrediction,  30000);  // AI tip every 30s
+        setInterval(loadForecast,    30000);  // forecast every 30s
+        setInterval(loadAnomalies,   60000);  // anomaly scan every 60s
+        setInterval(loadWeeklyChart, 60000);  // weekly chart every 60s
+        setInterval(loadSalesChart,  60000);  // trend chart every 60s
+    };
+</script>
+</body>
+</html>
