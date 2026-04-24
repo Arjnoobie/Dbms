@@ -1,5 +1,5 @@
 
-#  Inventory Tracker & Supply Chain System
+#  Inventory & Supply Chain Tracker
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
