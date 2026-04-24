@@ -246,7 +246,3 @@ def get_db_connection():
 4. Push and open a Pull Request
 
 ---
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
