@@ -1,5 +1,5 @@
-<img width="90" height="20" alt="version-1 0 0-blue" src="https://github.com/user-attachments/assets/5b2d2b74-0b43-4f8d-90e4-73f3dfcb55af" />!<svg xmlns="http://www.w3.org/2000/svg" width="90" height="20" role="img" aria-label="version: 1.0.0"><title>version: 1.0.0</title><linearGradient id="s" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="r"><rect width="90" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#r)"><rect width="51" height="20" fill="#555"/><rect x="51" width="39" height="20" fill="#007ec6"/><rect width="90" height="20" fill="url(#s)"/></g><g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="110"><text aria-hidden="true" x="265" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="410">version</text><text x="265" y="140" transform="scale(.1)" fill="#fff" textLength="410">version</text><text aria-hidden="true" x="695" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="290">1.0.0</text><text x="695" y="140" transform="scale(.1)" fill="#fff" textLength="290">1.0.0</text></g></svg>[Uploading version-1.0.0-blue.svg…]()
-# 📦 Inventory Tracker & Supply Chain System
+
+#  Inventory Tracker & Supply Chain System
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -11,7 +11,7 @@ A hybrid Java + Python inventory management system with a Spring Boot backend fo
 
 ---
 
-## 📋 Table of Contents
+##  Table of Contents
 
 - [Features](#features)
 - [Tech Stack](#tech-stack)
@@ -29,14 +29,14 @@ A hybrid Java + Python inventory management system with a Spring Boot backend fo
 
 ---
 
-## ✨ Features
+##  Features
 
-- 📊 **Inventory tracking** — Manage items, stock levels, and product details via `InventoryItem`
-- 🧾 **Sales history** — Record and query historical sales data through `SalesHistory`
-- 🤖 **AI stock-out prediction** — Flask microservice (`predictor.py`) calculates which item is closest to running out based on average daily sales over the last 30 days
-- 🔌 **REST API** — Clean endpoints served by Spring Boot with a static frontend (`index.html`)
-- 🐍 **Python analytics layer** — Decoupled prediction service using `psycopg2` + `statistics` for data analysis
-- 🌐 **CORS-enabled** — Frontend and backend can run on separate ports during development
+-  **Inventory tracking** — Manage items, stock levels, and product details via `InventoryItem`
+-  **Sales history** — Record and query historical sales data through `SalesHistory`
+-  **AI stock-out prediction** — Flask microservice (`predictor.py`) calculates which item is closest to running out based on average daily sales over the last 30 days
+-  **REST API** — Clean endpoints served by Spring Boot with a static frontend (`index.html`)
+-  **Python analytics layer** — Decoupled prediction service using `psycopg2` + `statistics` for data analysis
+-  **CORS-enabled** — Frontend and backend can run on separate ports during development
 
 ---
 
@@ -86,7 +86,7 @@ inventory/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -184,7 +184,7 @@ The predictor API will be available at `http://localhost:5000`.
 
 ---
 
-## ⚙️ Configuration
+##  Configuration
 
 ### Spring Boot — `application.properties`
 
@@ -207,9 +207,9 @@ export DB_PASSWORD=your_secure_password
 
 ---
 
-## 🔐 Security Notes
+##  Security Notes
 
-> ⚠️ **Never hardcode database credentials in source code.**
+>  **Never hardcode database credentials in source code.**
 
 Update `predictor.py` to read credentials from environment variables:
 
@@ -230,7 +230,7 @@ def get_db_connection():
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
 ```bash
 ./mvnw test
@@ -238,7 +238,7 @@ def get_db_connection():
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/your-feature`
