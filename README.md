@@ -25,7 +25,6 @@ A hybrid Java + Python inventory management system with a Spring Boot backend fo
 - [Configuration](#configuration)
 - [Security Notes](#security-notes)
 - [Contributing](#contributing)
-- [License](#license)
 
 ---
 
